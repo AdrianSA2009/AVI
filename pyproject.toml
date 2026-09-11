@@ -1,0 +1,19 @@
+[project]
+name = "automated-visual-inspection"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Rahmat Assidik", email = "rahmatassidik32@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
+
+[project.scripts]
+automated-visual-inspection = "automated_visual_inspection:main"
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
