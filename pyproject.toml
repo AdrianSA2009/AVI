@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-automated-visual-inspection = "automated_visual_inspection:main"
+automated-visual-inspection = "automated_visual_inspection.main:main"
 
 [build-system]
 requires = ["uv_build>=0.12.13,<0.13.0"]

@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3efe6;
+  --foreground: #1b2925;
+  --ink-muted: #66746d;
+  --line: rgba(27, 41, 37, 0.15);
+  --accent: #d46a46;
+  --accent-soft: #f1c9a9;
 }
 
 @theme inline {
@@ -12,15 +16,132 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  margin: 0;
+}
+
+.shell {
+  min-height: 100vh;
+  background: radial-gradient(circle at 90% 10%, #f7d9bd 0, transparent 28%),
+    linear-gradient(135deg, #f3efe6 0%, #e7eee6 100%);
+  padding: 5rem clamp(1.5rem, 7vw, 8rem);
+}
+
+.hero {
+  max-width: 56rem;
+  margin-bottom: 4rem;
+}
+
+.eyebrow,
+.panelIndex {
+  color: var(--accent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(4rem, 12vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+  margin: 1rem 0 1.5rem;
+}
+
+.intro {
+  color: var(--ink-muted);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.5;
+  max-width: 38rem;
+}
+
+.status {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--accent);
+  background: rgba(255, 255, 255, 0.45);
+  max-width: 30rem;
+}
+
+.status span {
+  color: var(--ink-muted);
+}
+
+.statusConnected {
+  border-color: #3f8067;
+}
+
+.statusOffline {
+  border-color: #b9503a;
+  flex-direction: column;
+}
+
+.statusChecking {
+  color: var(--ink-muted);
+}
+
+.stack {
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.panel {
+  border-right: 1px solid var(--line);
+  padding: 1.5rem 1.5rem 1.5rem 0;
+  min-height: 12rem;
+}
+
+.panel + .panel {
+  padding-left: 1.5rem;
+}
+
+.panel:last-child {
+  border-right: 0;
+}
+
+.panel h2 {
+  font-size: 1.4rem;
+  margin: 3rem 0 0.75rem;
+}
+
+.panel p {
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.panelAccent {
+  background: var(--accent-soft);
+  padding-right: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .shell {
+    padding: 3rem 1.25rem;
+  }
+
+  .stack {
+    grid-template-columns: 1fr;
+  }
+
+  .panel,
+  .panel + .panel {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    padding: 1.5rem 0;
+  }
+
+  .panel:last-child {
+    border-bottom: 0;
+  }
 }

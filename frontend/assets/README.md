@@ -1,0 +1,1 @@
+Letakkan aset visual frontend yang dikelola aplikasi di folder ini.
