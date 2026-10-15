@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     pts = [args.model] if args.model else [find_best_pt(1), find_best_pt(2)]
-    tensor, img = sample_tensor()
+    tensor, img = sample_tensor(args.imgsz)
     report: dict = {"imgsz": args.imgsz, "iters": args.iters,
                     "sample": str(img), "models": []}
 
