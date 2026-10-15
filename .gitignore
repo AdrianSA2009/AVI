@@ -17,3 +17,14 @@ coverage/
 ml_models/*.pt
 uploads/
 *.log
+
+ml/runs/
+ml/weights/*.pt
+ml/weights/*.onnx
+ml/exports/*
+ml/data/raw/*
+ml/data/processed/*
+ml/data/samples/*
+ml/datasets/**/images/
+ml/datasets/**/labels/
+!**/.gitkeep

@@ -1,0 +1,63 @@
+# Daftar kelas baku prototipe SIBI — sumber kebenaran kelas.
+# Dipakai: pemetaan nama kelas per sumber, pembuatan dataset.yaml YOLO, laporan.
+# Tipe gestur diverifikasi lewat Kamus SIBI Kemendikbud (docs/datasets.md #22).
+#
+# kategori: huruf | angka | kata
+# tipe:     statis | dinamis   (dinamis = butuh gerakan → Jalur B, bukan YOLO per-frame)
+
+meta:
+  scope: "alfabet, angka, dan kosakata SIBI terbatas (bukan kalimat bebas)"
+  kata_source: "daftar 50 kata dari dataset #1 (SIBI Official), diverifikasi di kamus"
+  updated: "2026-10-09"
+
+kelas:
+  # --- Huruf (A-Z) ---
+  - { id: 0,  nama: "A",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 1,  nama: "B",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 2,  nama: "C",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 3,  nama: "D",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 4,  nama: "E",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 5,  nama: "F",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 6,  nama: "G",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 7,  nama: "H",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 8,  nama: "I",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 9,  nama: "J",     kategori: huruf, tipe: dinamis,  catatan: "gerakan pergelangan → Jalur B" }
+  - { id: 10, nama: "K",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 11, nama: "L",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 12, nama: "M",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 13, nama: "N",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 14, nama: "O",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 15, nama: "P",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 16, nama: "Q",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 17, nama: "R",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 18, nama: "S",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 19, nama: "T",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 20, nama: "U",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 21, nama: "V",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 22, nama: "W",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 23, nama: "X",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 24, nama: "Y",     kategori: huruf, tipe: statis,   catatan: "" }
+  - { id: 25, nama: "Z",     kategori: huruf, tipe: dinamis,  catatan: "gerakan zigzag → Jalur B" }
+
+  # --- Angka (0-9) ---
+  - { id: 26, nama: "0",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 27, nama: "1",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 28, nama: "2",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 29, nama: "3",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 30, nama: "4",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 31, nama: "5",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 32, nama: "6",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 33, nama: "7",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 34, nama: "8",    kategori: angka, tipe: statis, catatan: "" }
+  - { id: 35, nama: "9",    kategori: angka, tipe: statis, catatan: "" }
+
+  # --- Kosakata: isi dari daftar 50 kata dataset #1, lalu verifikasi di kamus #22.
+  #     Contoh format: { id: 36, nama: "terima kasih", kategori: kata, tipe: dinamis, catatan: "..." }
+
+# Pemetaan nama kelas per sumber ke kelas baku — diisi setelah dataset diunduh
+# (nama folder kelas tiap sumber bisa berbeda: "a", "A", "huruf_a", dst).
+# Contoh:
+# pemetaan_sumber:
+#   1: { "hello": "HELLO", "thank you": "TERIMA KASIH" }   # nama asli -> kelas baku
+#   5: { "a": "A", "b": "B" }
+pemetaan_sumber: {}

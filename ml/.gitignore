@@ -1,0 +1,9 @@
+/data/raw/*
+/data/processed/*
+
+/datasets/sibi/*
+/runs/*
+/weights/*
+/exports/*
+
+!**/.gitkeep
