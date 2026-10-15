@@ -159,7 +159,7 @@ def main() -> int:
     if not cap.isOpened():
         raise SystemExit(f"Kamera {args.camera} tidak bisa dibuka")
     if args.onnx is False:
-        import torchQ   
+        import torch  
         if not torch.cuda.is_available():
             print("CUDA tidak ada — jalankan dengan --onnx bila tanpa GPU")
 
