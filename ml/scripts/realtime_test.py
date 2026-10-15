@@ -30,6 +30,21 @@ import numpy as np
 IMGSZ = 640
 
 
+def letterbox_frame(frame: np.ndarray) -> tuple[np.ndarray, float, int, int]:
+    height, width = frame.shape[:2]
+    scale = min(IMGSZ / width, IMGSZ / height)
+    resized_width = int(round(width * scale))
+    resized_height = int(round(height * scale))
+    pad_x = (IMGSZ - resized_width) // 2
+    pad_y = (IMGSZ - resized_height) // 2
+    resized = cv2.resize(frame, (resized_width, resized_height),
+                         interpolation=cv2.INTER_LINEAR)
+    boxed = np.full((IMGSZ, IMGSZ, 3), 114, dtype=np.uint8)
+    boxed[pad_y:pad_y + resized_height,
+          pad_x:pad_x + resized_width] = resized
+    return boxed, scale, pad_x, pad_y
+
+
 def find_best_pt(run: int) -> Path:
     candidates = [
         Path(f"runs/detect/runs/detect/fold_{run}/weights/best.pt"),
@@ -43,10 +58,14 @@ def find_best_pt(run: int) -> Path:
 
 
 def make_predictor(args: argparse.Namespace):
-    """Fungsi predict(frame BGR) -> list[dict(x1,y1,x2,y2,cls,conf)]."""
+    """Fungsi predict(frame BGR) -> l
+    
+    
+    
+    ist[dict(x1,y1,x2,y2,cls,conf)]."""
     if args.onnx:
+        import ast
         import onnxruntime as ort
-        from PIL import Image
         onnx_path = Path(args.model).with_suffix(".onnx") \
             if args.model else Path("exports/fold_1_best.onnx")
         if not onnx_path.is_file():
@@ -54,17 +73,20 @@ def make_predictor(args: argparse.Namespace):
                              "(jalankan scripts/export_onnx.py dulu)")
         sess = ort.InferenceSession(str(onnx_path),
                                     providers=["CPUExecutionProvider"])
+        model_names = ast.literal_eval(
+            sess.get_modelmeta().custom_metadata_map["names"])
         inp = sess.get_inputs()[0].name
         out_name = sess.get_outputs()[0].name
 
         def predict(frame: np.ndarray) -> list[dict]:
-            with Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)) as im:
-                arr = np.asarray(im.resize((IMGSZ, IMGSZ)),
-                                 dtype=np.float32) / 255.0
+            boxed, scale, pad_x, pad_y = letterbox_frame(frame)
+            arr = cv2.cvtColor(boxed, cv2.COLOR_BGR2RGB).astype(np.float32)
+            arr /= 255.0
             x = arr.transpose(2, 0, 1)[None]
             y = sess.run([out_name], {inp: x})[0][0]      # (nc+4, N)
             y = y.T                                       # (N, nc+4)
-            boxes, scores, ids = [], [], []
+            grouped: dict[int, list[tuple[list[int], float]]] = {}
+            frame_height, frame_width = frame.shape[:2]
             for row in y:
                 cls = row[4:]
                 cid = int(cls.argmax())
@@ -72,15 +94,33 @@ def make_predictor(args: argparse.Namespace):
                 if conf < args.conf:
                     continue
                 cx, cy, w, h = row[:4]
-                boxes.append([int((cx - w / 2) * frame.shape[1]),
-                              int((cy - h / 2) * frame.shape[0]),
-                              int((cx + w / 2) * frame.shape[1]),
-                              int((cy + h / 2) * frame.shape[0])])
-                scores.append(conf)
-                ids.append(cid)
-            return [{"x1": b[0], "y1": b[1], "x2": b[2], "y2": b[3],
-                     "cls": args.names[c], "conf": s}
-                    for b, s, c in zip(boxes, scores, ids)]
+                x1 = round((cx - w / 2 - pad_x) / scale)
+                y1 = round((cy - h / 2 - pad_y) / scale)
+                x2 = round((cx + w / 2 - pad_x) / scale)
+                y2 = round((cy + h / 2 - pad_y) / scale)
+                x1 = max(0, min(frame_width - 1, x1))
+                y1 = max(0, min(frame_height - 1, y1))
+                x2 = max(0, min(frame_width - 1, x2))
+                y2 = max(0, min(frame_height - 1, y2))
+                if x2 <= x1 or y2 <= y1:
+                    continue
+                box = [x1, y1, x2 - x1, y2 - y1]
+                grouped.setdefault(cid, []).append((box, conf))
+
+            detections = []
+            for cid, candidates in grouped.items():
+                boxes = [candidate[0] for candidate in candidates]
+                scores = [candidate[1] for candidate in candidates]
+                keep = cv2.dnn.NMSBoxes(boxes, scores, args.conf, args.iou)
+                for index in np.asarray(keep).reshape(-1):
+                    box, score = candidates[int(index)]
+                    x1, y1, width, height = box
+                    detections.append({
+                        "x1": x1, "y1": y1,
+                        "x2": x1 + width, "y2": y1 + height,
+                        "cls": model_names[cid], "conf": score,
+                    })
+            return detections
 
         return predict
 
@@ -101,31 +141,29 @@ def make_predictor(args: argparse.Namespace):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--camera", type=int, default=0)
-    ap.add_argument("--conf", type=float, default=0.5)
+    ap.add_argument("--conf", type=float, default=0.3)
+    ap.add_argument("--iou", type=float, default=0.45,
+                    help="ambang NMS untuk menghapus kotak duplikat")
     ap.add_argument("--model", type=Path, default=None,
                     help="path .pt (default best.pt fold_1)")
     ap.add_argument("--onnx", action="store_true",
                     help="pakai ONNX CPU (uji jalur VPS) alih-alih torch GPU")
-    ap.add_argument("--smooth", type=int, default=7,
+    ap.add_argument("--smooth", type=int, default=5,
                     help="jumlah frame voting (3 = responsif, 15 = stabil)")
     ap.add_argument("--save-dir", type=Path, default=Path("data/webcam_test"))
     args = ap.parse_args()
 
-    import yaml
-    args.names = {str(k): v for k, v in yaml.safe_load(
-        Path("datasets/sibi/run1.yaml").read_text(encoding="utf-8"))[
-            "names"].items()}
     predict = make_predictor(args)
 
     cap = cv2.VideoCapture(args.camera)
     if not cap.isOpened():
         raise SystemExit(f"Kamera {args.camera} tidak bisa dibuka")
     if args.onnx is False:
-        import torch
+        import torchQ   
         if not torch.cuda.is_available():
             print("CUDA tidak ada — jalankan dengan --onnx bila tanpa GPU")
 
-    history: deque[str] = deque(maxlen=args.smooth)
+    history: deque[str | None] = deque(maxlen=args.smooth)
     fps, t_prev, warmup = 0.0, time.perf_counter(), 0
     saved = 0
     print("Tombol: Q = keluar | S = screenshot ke "
@@ -144,8 +182,8 @@ def main() -> int:
         if warmup and dets:
             status = "Sedang Memproses"
         best = max(dets, key=lambda d: d["conf"]) if dets else None
+        history.append(best["cls"] if best else None)
         if best:
-            history.append(best["cls"])
             for d in dets:
                 cv2.rectangle(frame, (d["x1"], d["y1"]), (d["x2"], d["y2"]),
                               (0, 255, 0), 2)
@@ -154,26 +192,32 @@ def main() -> int:
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6,
                             (0, 255, 0), 2, cv2.LINE_AA)
         else:
-            history.clear()
-            status = "Input Tidak Terdeteksi"
+            status = "Gestur belum terbaca"
 
-        votes = Counter(history)
+        votes = Counter(label for label in history if label is not None)
         stable, n = votes.most_common(1)[0] if votes else ("", 0)
-        if n >= max(2, len(history) // 2 + 1) and len(history) >= 3:
+        recognized = (n >= max(2, len(history) // 2 + 1)
+                      and len(history) >= 3)
+        if recognized:
             status = f"Gestur Terdeteksi: {stable} ({n}/{len(history)})"
 
         dt = time.perf_counter() - t0
         fps = 0.9 * fps + 0.1 * (1 / dt if dt else 0)
-        hud = [("Kamera Aktif", (0, 255, 0)),
-               (f"FPS: {fps:.1f}", (0, 255, 255)),
-               (f"Status: {status}",
-                (0, 255, 0) if status.startswith("Gestur")
-                else (0, 165, 255) if "Memproses" in status
-                else (0, 0, 255))]
-        for i, (text, color) in enumerate(hud):
-            y = 26 + i * 26
-            cv2.putText(frame, text, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                        color, 2, cv2.LINE_AA)
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (0, 0), (frame.shape[1], 100), (14, 20, 24), -1)
+        cv2.addWeighted(overlay, 0.82, frame, 0.18, 0, frame)
+        if recognized:
+            headline, color = f"GESTUR: {stable}", (80, 255, 100)
+        elif best:
+            headline, color = f"MEMBACA: {best['cls']}", (80, 220, 255)
+        else:
+            headline, color = "GESTUR BELUM TERBACA", (80, 150, 255)
+        cv2.putText(frame, headline, (16, 43), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.0, color, 3, cv2.LINE_AA)
+        confidence = f"Keyakinan: {best['conf']:.0%}" if best else ""
+        cv2.putText(frame, f"{confidence}   FPS: {fps:.1f}", (18, 78),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.65, (245, 245, 245),
+                    2, cv2.LINE_AA)
 
         cv2.imshow("Uji Realtime SIBI (Q=keluar, S=screenshot)", frame)
         key = cv2.waitKey(1) & 0xFF
