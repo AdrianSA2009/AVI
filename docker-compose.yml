@@ -30,7 +30,7 @@ services:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - ./backend:/app
-      - ./ml_models:/app/ml_models:ro
+      - ./ml/runs/static26_deploy/deploy.pt:/app/ml/runs/static26_deploy/deploy.pt:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,6 +38,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}

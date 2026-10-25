@@ -27,7 +27,7 @@ from PIL import Image
 
 IMG_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 VID_EXT = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
-DUP_MAX_DIST = 6  # jarak Hamming dHash 64-bit: <=6 dianggap near-duplicate
+DUP_MAX_DIST = 6
 
 
 @dataclass
