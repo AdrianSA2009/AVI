@@ -26,11 +26,12 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:3000}
+      SIBI_MODEL_PATH: /app/models/deploy.pt
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - ./backend:/app
-      - ./ml_models:/app/ml_models:ro
+      - ./ml/runs/static26_deploy/deploy.pt:/app/models/deploy.pt:ro
     depends_on:
       postgres:
         condition: service_healthy

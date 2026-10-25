@@ -332,6 +332,9 @@ h1, h2, h3, p { margin-top: 0; }
 .sign-main-column { min-width: 0; }
 .camera-stage { position: relative; display: flex; min-height: 360px; aspect-ratio: 1.72; flex-direction: column; justify-content: space-between; padding: 15px; overflow: hidden; background-color: var(--forest); background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 30px 30px; color: #eff8f3; }
 .camera-stage-topline, .camera-stage-bottomline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.camera-stage > .sign-camera { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; }
+.sign-camera .camera-stage-topline, .sign-camera .camera-stage-bottomline { position: static; z-index: 2; }
+.sign-camera .camera-stage-bottomline { flex-wrap: wrap; }
 .camera-stage-topline { color: #e2eee8; font-size: 10px; }
 .camera-stage-topline > span:first-child { display: inline-flex; align-items: center; gap: 7px; }
 .camera-stage-topline .status-dot { width: 6px; height: 6px; background: #e2a355; }
@@ -746,6 +749,17 @@ h1, h2, h3, p { margin-top: 0; }
   .library-tabs .sample-data-label { display: none; }
   .library-letter { height: 82px; font-size: 32px; }
 }
+
+.sign-camera { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 12px 14px; }
+.sign-camera-video { position: absolute; inset: 46px 14px; display: none; width: calc(100% - 28px); height: calc(100% - 92px); object-fit: contain; background: #104b46; }
+.sign-camera-video.is-active { display: block; }
+.sign-camera-placeholder { position: absolute; top: 50%; left: 50%; display: grid; width: 138px; aspect-ratio: 1; place-items: center; border: 2px solid #f2bd66; transform: translate(-50%, -50%); }
+.sign-camera-placeholder .gesture-frame-label { position: absolute; top: -21px; left: -2px; padding: 3px 6px; background: #f1b45a; color: #422c1e; font-size: 9px; font-weight: 650; }
+.sign-camera-placeholder .gesture-frame-mark { color: var(--lime); font-size: 54px; font-weight: 650; line-height: 1; }
+.sign-camera-prompt { position: absolute; top: calc(100% + 16px); width: 230px; color: #c9d8cf; font-size: 9px; text-align: center; }
+.sign-camera-error { position: absolute; right: 12px; bottom: 46px; left: 12px; margin: 0; padding: 8px 10px; background: rgba(24, 38, 32, .9); color: #fff; font-size: 12px; }
+.sign-camera .camera-stage-topline, .sign-camera .camera-stage-bottomline { position: static; }
+.sign-camera .camera-stage-bottomline { flex-wrap: wrap; }
 
 /* Captured user conversation and submission pages */
 .dashboard-header-actions { gap: 20px; }

@@ -6,7 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip uninstall -y opencv-python opencv-python-headless opencv-contrib-python opencv-contrib-python-headless && \
+    pip install --no-cache-dir opencv-python-headless
 
 COPY app ./app
 

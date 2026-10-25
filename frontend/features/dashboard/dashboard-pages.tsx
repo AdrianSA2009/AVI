@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AudioLines, Camera, Hand, Mic, Play, Upload, Volume2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { SignCamera } from "@/features/dashboard/sign-camera";
 
 function DashboardHeading({ eyebrow, title, description }: {
   eyebrow: string;
@@ -48,18 +49,7 @@ export function SignLanguageDashboard() {
           <div className="sign-main-column">
             <section className="sign-camera-section" aria-labelledby="sign-camera-title">
               <div className="camera-stage">
-                <div className="camera-stage-topline">
-                  <span><i className="status-dot is-pending" /> Kamera belum terhubung</span>
-                  <span className="detection-badge">MENUNGGU GESTUR</span>
-                </div>
-                <div className="gesture-frame" aria-hidden="true">
-                  <span className="gesture-frame-label">AREA DETEKSI</span>
-                  <span className="gesture-frame-mark">+</span>
-                </div>
-                <div className="camera-stage-bottomline">
-                  <span id="sign-camera-title">Pratinjau kamera</span>
-                  <button className="stage-control" type="button" disabled>Kamera web belum tersedia</button>
-                </div>
+                <SignCamera />
               </div>
             </section>
               <section className="translation-result" aria-labelledby="sign-output-title">
