@@ -18,13 +18,20 @@ ml_models/*.pt
 uploads/
 *.log
 
-ml/runs/
+# ML artifacts and private/local data
+ml/runs/**
+!ml/runs/**/.gitkeep
 ml/weights/*.pt
 ml/weights/*.onnx
-ml/exports/*
-ml/data/raw/*
-ml/data/processed/*
-ml/data/samples/*
-ml/datasets/**/images/
-ml/datasets/**/labels/
+ml/exports/**
+ml/data/raw/**
+ml/data/processed/**
+ml/data/samples/**
+ml/data/video_train_sibi/**
+ml/data/video_test/**
+ml/data/webcam_test/**
+ml/datasets/video_yolo
+ml/datasets/sibi/**/images/**
+ml/datasets/sibi/**/labels/**
+ml/outputs/**
 !**/.gitkeep

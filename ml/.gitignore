@@ -1,9 +1,15 @@
-/data/raw/*
-/data/processed/*
-
-/datasets/sibi/*
-/runs/*
-/weights/*
-/exports/*
+# Local data and generated ML artifacts
+/data/raw/**
+/data/processed/**
+/data/video_train_sibi/**
+/data/video_test/**
+/data/webcam_test/**
+/datasets/**
+/datasets/sibi/**/images/**
+/datasets/sibi/**/labels/**
+/runs/**
+/weights/**
+/exports/**
+/outputs/**
 
 !**/.gitkeep
