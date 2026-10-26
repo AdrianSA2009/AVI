@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AudioLines, Camera, Hand, Mic, Play, Upload, Volume2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { SignCamera } from "@/features/dashboard/sign-camera";
+import { AvatarTextPlayer } from "@/features/dashboard/avatar-text-player";
 
 function DashboardHeading({ eyebrow, title, description }: {
   eyebrow: string;
@@ -63,15 +64,9 @@ export function SignLanguageDashboard() {
           <aside className="conversation-rail">
             <section className="partner-section" id="avatar" aria-labelledby="partner-title">
               <PanelHeading label="DARI LAWAN BICARA" title="Lawan bicara" />
-              <div className="partner-video" id="partner-title" aria-label="Video lawan bicara belum tersedia">
-                <span className="video-play" aria-hidden="true">▶</span>
+              <div id="partner-title" aria-label="Avatar penerjemah alfabet">
+                <AvatarTextPlayer />
               </div>
-              <div className="video-controls">
-                <button type="button" disabled>Putar ulang</button>
-                <span>Belum ada video</span>
-                <div className="playback-rates"><button type="button" disabled>0,5×</button><button type="button" disabled>1×</button></div>
-              </div>
-              <div className="transcript-preview"><span>DARI SUARA</span><p>Transkrip lawan bicara akan tampil di sini.</p></div>
             </section>
             <section className="conversation-history" aria-labelledby="sign-history-title">
               <PanelHeading label="PERCAKAPAN" title="Riwayat percakapan" />
@@ -121,11 +116,8 @@ export function GeneralDashboard() {
           </div>
           <aside className="general-response" aria-label="Respons isyarat dan percakapan">
             <section className="sign-visualization" aria-labelledby="visualization-title">
-              <h2 id="visualization-title">Visualisasi isyarat SIBI</h2>
-              <div className="sign-video-placeholder"><button type="button" disabled aria-label="Visualisasi belum tersedia"><Play aria-hidden="true" /></button></div>
-              <p className="gloss-label">Urutan gloss dari kalimat</p>
-              <div className="gloss-words"><span>SELAMAT</span><span className="is-current">SIANG</span><span>ADA</span><span>BANTU</span></div>
-              <div className="sign-video-controls"><button type="button" disabled>Putar ulang</button><div><button type="button" disabled>0,5×</button><button className="is-current" type="button" disabled>1×</button></div></div>
+              <h2 id="visualization-title">Avatar isyarat SIBI</h2>
+              <AvatarTextPlayer />
             </section>
             <section className="general-history" aria-labelledby="general-history-title">
               <h2 id="general-history-title">Riwayat percakapan</h2>

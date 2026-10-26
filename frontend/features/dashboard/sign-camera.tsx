@@ -42,9 +42,10 @@ export function SignCamera() {
         const body = await response.json();
         if (!response.ok) throw new Error(body.detail ?? "Prediksi gagal");
         if (active) {
-          setPredictions(body.predictions as Prediction[]);
+          const nextPredictions = body.predictions as Prediction[];
+          setPredictions(nextPredictions);
           setError("");
-          setStatus(body.predictions.length ? "Gestur terdeteksi" : "Tangan belum terdeteksi");
+          setStatus(nextPredictions.length ? "Gestur terdeteksi" : "Tangan belum terdeteksi");
         }
       } catch (cause) {
         if (active) {

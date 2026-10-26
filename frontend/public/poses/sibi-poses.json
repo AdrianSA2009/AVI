@@ -1,0 +1,15 @@
+{
+  "A": {
+    "bones": {
+      "RightHandIndex1": [0, 0, 0, 1],
+      "RightHandIndex2": [0, 0, 0, 1]
+    },
+    "duration": 0.6
+  },
+  "B": {
+    "bones": {
+      "RightHandMiddle1": [0, 0, 0, 1]
+    },
+    "duration": 0.6
+  }
+}
